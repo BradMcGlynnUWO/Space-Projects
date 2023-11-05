@@ -25,12 +25,12 @@ To install and run the project, follow these steps:
 1. Clone the repository to your local machine:
 
 ```bash
-git clone https://github.com/yourusername/OrbitalSimulator.git
+git clone https://github.com/BradMcGlynnUWO/Space-Projects/Orbital-Mechanics-Simulator.git
 ```
 
 2. Navigate to the project directory:
 ```bash
-cd OrbitalSimulator
+cd Orbital-Mechanics-Simulator
 ```
 
 3. Build the project usinf the `make` command:
@@ -43,7 +43,7 @@ This will compile all the necessary files and create an executable in the `/bin`
 ## Running the Simulation
 To run the simulator, you can use the following command:
 ```bash
-./bin/OrbitalSimulator
+./bin/Orbital-Mechanics-Simulator
 ```
 
 This will launch the simulation window where you can interact with the simulation through the GUI.
