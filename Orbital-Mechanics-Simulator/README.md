@@ -76,22 +76,7 @@ The project is organized into several directories:
 - `SimulationController`: Coordinates between the physics, rendering, and GUI elements.
 - `FileManager`: Reads and writes simulation data, such as initial state configurations.
 
-## Contributing
-
-Please read [CONTRIBUTING.md](/docs/CONTRIBUTING.md) for details on our code of conduct, and the process for submitting pull requests to us.
 
 ## Authors
 
 - **Bradley McGlynn** - *Initial work* - [BradMcGlynnUWO](https://github.com/BradMcGlynnUWO)
-
-See also the list of [contributors](https://github.com/yourusername/OrbitalSimulator/contributors) who participated in this project.
-
-## License
-
-This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for details.
-
-## Acknowledgments
-
-- Hat tip to anyone whose code was used
-- Inspiration
-- etc.
