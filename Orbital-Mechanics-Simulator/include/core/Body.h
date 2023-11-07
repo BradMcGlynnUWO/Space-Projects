@@ -3,11 +3,13 @@
 
 #include "Vector3D.h"
 #include <string>
+#include <memory>
 
 // Forward declaration
 class PhysicsEngine;
 
-class Body {
+
+class Body : public std::enable_shared_from_this<Body>{
 private:
     Vector3D position;
     Vector3D velocity;
