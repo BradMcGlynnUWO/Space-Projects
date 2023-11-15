@@ -27,6 +27,10 @@ public:
     Vector3D operator/(double scalar) const;
     Vector3D& operator/=(double scalar);
 
+    // Equality 
+    bool operator==(const Vector3D& v) const;
+    bool operator!=(const Vector3D& v) const;
+
     // Dot product
     double dot(const Vector3D& v) const;
 

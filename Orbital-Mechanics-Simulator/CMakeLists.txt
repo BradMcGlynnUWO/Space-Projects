@@ -54,3 +54,7 @@ target_link_libraries(${PROJECT_NAME}_tests PRIVATE header_interface gtest_main)
 # Discover the unit tests
 include(GoogleTest)
 gtest_discover_tests(${PROJECT_NAME}_tests)
+
+add_custom_target(run-verbose-tests 
+    COMMAND ${CMAKE_CTEST_COMMAND} --rerun-failed --output-on-failure
+)

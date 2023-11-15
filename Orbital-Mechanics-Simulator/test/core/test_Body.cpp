@@ -29,18 +29,18 @@ TEST_F(BodyTest, Instantiation) {
     EXPECT_EQ(body.getName(), "Earth");
     EXPECT_DOUBLE_EQ(body.getMass(), 5.972e24);
     EXPECT_DOUBLE_EQ(body.getRadius(), 6371.0);
-    EXPECT_TRUE(body.getPosition() == position);
-    EXPECT_TRUE(body.getVelocity() == velocity);
+    EXPECT_EQ(body.getPosition(), position);
+    EXPECT_EQ(body.getVelocity(), velocity);
 }
 
 TEST_F(BodyTest, ForceApplicationAndReset) {
     Vector3D force(10.0, 0.0, 0.0);
 
     body1->addForce(force);
-    EXPECT_TRUE(body1->getForce() == force);
+    EXPECT_EQ(body1->getForce(), force);
 
     body1->resetForce();
-    EXPECT_TRUE(body1->getForce() == Vector3D());
+    EXPECT_EQ(body1->getForce(), Vector3D());
 }
 
 TEST_F(BodyTest, MassAndRadiusUpdate) {
@@ -56,21 +56,21 @@ TEST_F(BodyTest, PositionAndVelocityUpdate) {
     Vector3D newVelocity(5.0, 5.0, 5.0);
 
     body1->setPosition(newPosition);
-    EXPECT_TRUE(body1->getPosition() == newPosition);
+    EXPECT_EQ(body1->getPosition(), newPosition);
 
     body1->setVelocity(newVelocity);
-    EXPECT_TRUE(body1->getVelocity() == newVelocity);
+    EXPECT_EQ(body1->getVelocity(), newVelocity);
 }
 
 TEST_F(BodyTest, MotionUpdate) {
     Vector3D force(10.0, 0.0, 0.0);
 
-    body1->addForce(force);
-    physicsEngine.updateBody(body1->get(), body1->getForce(), deltaTime);
-    
     // Verify the body's velocity and position have been updated appropriately
     Vector3D expectedVelocity = force / body1->getMass() * deltaTime;
     Vector3D expectedPosition = body1->getPosition() + expectedVelocity * deltaTime;
+
+    body1->addForce(force);
+    physicsEngine.updateBody(body1, body1->getForce(), deltaTime);
     
     EXPECT_NEAR(body1->getVelocity().x, expectedVelocity.x, 1e-5);
     EXPECT_NEAR(body1->getPosition().x, expectedPosition.x, 1e-5);
@@ -89,39 +89,29 @@ TEST_F(BodyTest, PositionUpdateWithDeltaTime) {
     double smallDeltaTime = 1e-9; // Very small time step
     double largeDeltaTime = 1e3;  // Very large time step
 
-    physicsEngine.updateBody(body1->get(), body1->getForce(), smallDeltaTime);
+    physicsEngine.updateBody(body1, body1->getForce(), smallDeltaTime);
     EXPECT_NEAR(body1->getPosition().x, smallDeltaTime * 10.0, 1e-5);
 
-    physicsEngine.updateBody(body1->get(), body1->getForce(), largeDeltaTime);
+    physicsEngine.updateBody(body1, body1->getForce(), largeDeltaTime);
     EXPECT_NEAR(body1->getPosition().x, largeDeltaTime * 10.0, 1e-5);
 }
 
 TEST_F(BodyTest, DivisionByZeroInForces) {
     //Body body3("Body3", 1e24, 1e6, Vector3D(), Vector3D()); // Same position as body1
     // make a shared_ptr version of body3
-    std::shared_ptr<Body> body3_ptr = std::make_shared<Body>(("Body3", 1e24, 1e6, Vector3D(), Vector3D()));
+    std::shared_ptr<Body> body3 = std::make_shared<Body>("Body3", 1e24, 1e6, Vector3D(), Vector3D());
     
     
-    Vector3D force = physicsEngine.calculateGravitationalForce(body1->get(), body3->get());
+    Vector3D force = physicsEngine.calculateGravitationalForce(body1, body3);
 
     EXPECT_FALSE(std::isinf(force.x));
     EXPECT_FALSE(std::isnan(force.x));
-    EXPECT_TRUE(force == Vector3D());
+    EXPECT_EQ(force, Vector3D());
 }
 
-TEST_F(BodyTestFixture, PositionUpdateWithDeltaTime) {
-    double smallDeltaTime = 1e-9; // Very small time step
-    double largeDeltaTime = 1e3;  // Very large time step
 
-    engine.updateBody(body1->get(), Vector3D(), smallDeltaTime);
-    EXPECT_NEAR(body1->getPosition().x, smallDeltaTime * body1->getVelocity().x, SMALL_TOLERANCE);
-
-    engine.updateBody(body1->get(), Vector3D(), largeDeltaTime);
-    EXPECT_NEAR(body1->getPosition().x, largeDeltaTime * body1->getVelocity().x, LARGE_TOLERANCE);
-}
-
-TEST_F(BodyTestFixture, CloseProximityForces) {
-    Vector3D force = calculateGravitationalForce(body1->get(), body2->get());
+TEST_F(BodyTest, CloseProximityForces) {
+    Vector3D force = physicsEngine.calculateGravitationalForce(body1, body2);
     body1->addForce(force);
     EXPECT_NE(force, Vector3D(std::numeric_limits<double>::infinity(), 0.0, 0.0));
     EXPECT_LT(force.norm(), REASONABLE_MAX_FORCE);
@@ -133,7 +123,10 @@ TEST_F(BodyTest, ExtremeGravitationalForce) {
     body2->setPosition(Vector3D(1e-3, 0, 0));
 
     // Simulate the universe
-    physicsEngine.simulateUniverse({body1->get(), body2->get()}, deltaTime);
+    std::vector<std::shared_ptr<Body>> bodies;
+    bodies.push_back(body1);
+    bodies.push_back(body2);
+    physicsEngine.simulateUniverse(bodies, deltaTime);
 
     // Check if the force is not unreasonably high
     Vector3D force = body1->getForce();
@@ -143,8 +136,11 @@ TEST_F(BodyTest, ExtremeGravitationalForce) {
 // Test extended period motion
 TEST_F(BodyTest, ExtendedPeriodMotion) {
     // Simulate the universe for an extended period
+    std::vector<std::shared_ptr<Body>> bodies;
+    bodies.push_back(body1);
+    bodies.push_back(body2);
     for (int i = 0; i < 10000; ++i) {
-        physicsEngine.simulateUniverse({body1->get(), body2->get()}, deltaTime);
+        physicsEngine.simulateUniverse(bodies, deltaTime);
     }
 
     // Expect the bodies to not drift to infinity or collapse into each other
@@ -164,7 +160,7 @@ TEST_F(BodyTest, SeriesOfForces) {
     body1->addForce(force2);
     body1->addForce(force3);
 
-    physicsEngine.updateBody(body1->get(), body1->getForce(), deltaTime);
+    physicsEngine.updateBody(body1, body1->getForce(), deltaTime);
 
     // Check the net force is the sum of the individual forces
     Vector3D expectedForce = force1 + force2 + force3;
@@ -178,17 +174,16 @@ TEST_F(BodyTest, ClosePassCalculations) {
     // Bring two bodies very close to each other
     body2->setPosition(Vector3D(1e-5, 0, 0));
 
+    std::vector<std::shared_ptr<Body>> bodies;
+    bodies.push_back(body1);
+    bodies.push_back(body2);
+
     // Simulate the universe
-    physicsEngine.simulateUniverse({body1->get(), body2->get()}, deltaTime);
+    physicsEngine.simulateUniverse(bodies, deltaTime);
 
     // Ensure that forces do not become infinite or NaN
     Vector3D force = body1->getForce();
     EXPECT_FALSE(std::isinf(force.norm()));
     EXPECT_FALSE(std::isnan(force.norm()));
     EXPECT_GT(force.norm(), 0.0); // Should be a significant force, but not infinite
-}
-
-int main(int argc, char** argv) {
-    ::testing::InitGoogleTest(&argc, argv);
-    return RUN_ALL_TESTS();
 }

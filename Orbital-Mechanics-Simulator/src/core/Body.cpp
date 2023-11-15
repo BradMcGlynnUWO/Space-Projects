@@ -3,7 +3,18 @@
 
 // Constructor
 Body::Body(const std::string& name, double mass, double radius, const Vector3D& position, const Vector3D& velocity)
-    : name(name), mass(mass), radius(radius), position(position), velocity(velocity), force(0.0, 0.0, 0.0) {}
+    : name(name), mass(mass), radius(radius), position(position), velocity(velocity), force(0.0, 0.0, 0.0) {
+    if (this->mass <= 0) {
+        this->mass = 1;
+    }
+
+    if (this->radius <= 0) {
+        this->radius = 1;
+    }
+
+
+
+}
 
 // Getters
 const Vector3D& Body::getPosition() const { return position; }

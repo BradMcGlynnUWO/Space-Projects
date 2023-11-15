@@ -84,6 +84,15 @@ Vector3D& Vector3D::operator/=(double scalar) {
     return *this;
 }
 
+// Equality
+bool Vector3D::operator==(const Vector3D& v) const {
+    return x == v.x && y == v.y && z == v.z;
+}
+
+bool Vector3D::operator!=(const Vector3D& v) const {
+    return !(*this == v);
+}
+
 // Dot product
 double Vector3D::dot(const Vector3D& v) const {
     return x * v.x + y * v.y + z * v.z;
