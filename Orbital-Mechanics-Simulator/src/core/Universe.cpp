@@ -26,8 +26,8 @@ void Universe::update(PhysicsEngine& engine, double deltaTime) {
 void Universe::checkCollisions() {
     for (size_t i = 0; i < bodies.size(); ++i) {
         for (size_t j = i + 1; j < bodies.size(); ++j) {
-            if (bodies[i]->isColliding(*bodies[j])) {
-                handleCollision(*bodies[i], *bodies[j]);
+            if (isColliding(bodies[i], bodies[j])) {
+                handleCollision(bodies[i], bodies[j]);
             }
         }
     }
@@ -48,12 +48,12 @@ void Universe::handleCollision(std::shared_ptr<Body>& a, std::shared_ptr<Body>& 
     double newRadius = std::max(a->getRadius(), b->getRadius());
 
     // Create a new body with combined mass, calculated velocity, and new radius
-    std::shared_ptr<Body> newBody = std::make_shared<Body>("MergedBody", totalMass, newRadius, newPosition, newVelocity);
+    std::shared_ptr<Body> newBody = std::make_shared<Body>(a->getName() + "-" + b->getName(), totalMass, newRadius, newPosition, newVelocity);
     
     // Add the new body to the simulation and remove the old ones
     addBody(newBody);
-    removeBody(a);
-    removeBody(b);
+    removeBody(a->getName());
+    removeBody(b->getName());
 }
 
 const std::vector<std::shared_ptr<Body>>& Universe::getBodies() const {

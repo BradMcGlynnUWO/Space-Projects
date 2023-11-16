@@ -32,6 +32,7 @@ target_include_directories(header_interface INTERFACE
 # Specify your source files here
 set(SOURCE_FILES
     src/core/Body.cpp
+    src/core/Universe.cpp
     src/physics/PhysicsEngine.cpp
     src/core/Vector3D.cpp
     # Add any other .cpp files here
@@ -45,7 +46,8 @@ target_link_libraries(${PROJECT_NAME} PRIVATE header_interface)
 add_executable(${PROJECT_NAME}_tests
     test/core/test_Body.cpp
     test/core/test_Vector3D.cpp
-    # test/physics/PhysicsEngine_test.cpp
+    test/core/test_Universe.cpp
+    test/physics/test_PhysicsEngine.cpp
     # Add any other test .cpp files here
     ${SOURCE_FILES}
 )

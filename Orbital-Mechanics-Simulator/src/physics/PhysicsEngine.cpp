@@ -1,7 +1,8 @@
 #include "PhysicsEngine.h"
-#include <algorithm> // For std::max
+#include <algorithm>
+#include <iostream>
 
-const double G = 6.67430e-11; // Gravitational constant, should be defined somewhere in your code
+const double G = 6.67430e-11; // Gravitational constant
 
 // Calculate the gravitational force between two bodies
 Vector3D PhysicsEngine::calculateGravitationalForce(const std::shared_ptr<Body>& a, const std::shared_ptr<Body>& b) {
@@ -14,6 +15,7 @@ Vector3D PhysicsEngine::calculateGravitationalForce(const std::shared_ptr<Body>&
 
 // Update the velocity and position of a body using the calculated force
 void PhysicsEngine::updateBody(std::shared_ptr<Body>& body, const Vector3D& force, double deltaTime) {
+    if(body->getMass() == 0) return; // Skip update for zero mass body
     Vector3D acceleration = force / body->getMass();
     // Semi-implicit Euler method for integration, which is symplectic and better for conservation
     body->setVelocity(body->getVelocity() + acceleration * deltaTime);

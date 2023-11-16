@@ -11,9 +11,6 @@ Body::Body(const std::string& name, double mass, double radius, const Vector3D& 
     if (this->radius <= 0) {
         this->radius = 1;
     }
-
-
-
 }
 
 // Getters

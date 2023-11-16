@@ -17,6 +17,8 @@ public:
     void removeBody(const std::string& bodyName);
     void update(PhysicsEngine& engine, double deltaTime);
     void checkCollisions();
+    void handleCollision(std::shared_ptr<Body>& a, std::shared_ptr<Body>& b);
+    bool isColliding(const std::shared_ptr<Body>& a, const std::shared_ptr<Body>& b) const; 
     const std::vector<std::shared_ptr<Body>>& getBodies() const;
 };
 
