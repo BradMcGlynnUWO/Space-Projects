@@ -27,6 +27,10 @@ public:
     Vector3D operator/(double scalar) const;
     Vector3D& operator/=(double scalar);
 
+    // Equality 
+    bool operator==(const Vector3D& v) const;
+    bool operator!=(const Vector3D& v) const;
+
     // Dot product
     double dot(const Vector3D& v) const;
 
@@ -41,6 +45,15 @@ public:
 
     // Utility function for distance between two vectors
     static double distance(const Vector3D& v1, const Vector3D& v2);
+
+    // Utility function for angle between two vectors
+    static double angle(const Vector3D& v1, const Vector3D& v2);
+
+    // Utility funciton to get the squared magnitude of the vector
+    double squaredMagnitude() const;
+
+    // Utility function to get the normalized vector
+    Vector3D normalized() const;
 };
 
 #endif // VECTOR3D_H

@@ -1,0 +1,3 @@
+[submodule "Orbital-Mechanics-Simulator/lib/googletest"]
+	path = Orbital-Mechanics-Simulator/lib/googletest
+	url = https://github.com/google/googletest
